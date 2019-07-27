@@ -1,18 +1,30 @@
 import slixmpp
 import argparse
+from user import User
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='XMPP client.')
-    parser.add_argument('-s', dest='server', help='Server address')
     parser.add_argument('-j', dest='jid', help='JID to use')
     parser.add_argument('-p', dest='psw', help='Password')
 
     args = parser.parse_args()
 
-    if args.server is None:
-        args.server = input('Server address: ')
     if args.jid is None:
-        args.jid = input('Username: ')
+        # args.jid = input('Username: ')
+        args.jid = 'javier@alumchat.xyz'
     if args.psw is None:
-        args.psw = input('Password: ')
+        # args.psw = input('Password: ')
+        args.psw = 'j66352769'
 
+    xmpp = User(jid=args.jid, password=args.psw)
+    xmpp.register_plugin('xep_0030')  # Service Discovery
+    xmpp.register_plugin('xep_0004')  # Data forms
+    xmpp.register_plugin('xep_0066')  # Out-of-band Data
+    xmpp.register_plugin('xep_0077')  # Register
+
+    xmpp.plugin['xep_0077'].force_registration = True
+
+    xmpp.connect()
+
+    xmpp.process()
+    xmpp.send_message(mto='a@alumchat.xyz', mbody='Hello')
