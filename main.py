@@ -19,12 +19,13 @@ if __name__ == '__main__':
     xmpp = User(jid=args.jid, password=args.psw)
     xmpp.register_plugin('xep_0030')  # Service Discovery
     xmpp.register_plugin('xep_0004')  # Data forms
+    xmpp.register_plugin('xep_0060')  # PubSub
+    xmpp.register_plugin('xep_0199')  # XMPP Ping
     xmpp.register_plugin('xep_0066')  # Out-of-band Data
     xmpp.register_plugin('xep_0077')  # Register
 
     xmpp.plugin['xep_0077'].force_registration = True
 
     xmpp.connect()
-
     xmpp.process()
-    xmpp.send_message(mto='a@alumchat.xyz', mbody='Hello')
+    xmpp.send_message(mto='a@alumchat.xyz', mbody='There')
