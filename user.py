@@ -2,6 +2,9 @@ import slixmpp
 from threading import Thread
 from slixmpp.exceptions import IqError, IqTimeout
 from menu import OptionsMenu, get_option, menu
+from blessed import Terminal
+
+t = Terminal()
 
 
 class User(slixmpp.ClientXMPP):
@@ -62,20 +65,52 @@ class User(slixmpp.ClientXMPP):
         mbody = get_option('Contenido: ')
         self.send_message(mto=mto, mbody=mbody)
 
+    # TODO: enter to room
     def send_group_message(self):
-        return
+        pass
 
+    # TODO: get all users connected
     def get_my_roster(self):
         print(self.get_roster())
 
+    # TODO: parse from roster
+    def get_one_user(self):
+        jid = get_option('jid: ')
+        roster = self.get_roster()
+        f = open('menu.py', 'rb')
+        f.read()
+
+
     def add_to_roster(self):
-        jid = get_option('Nombre del jid: ')
+        jid = get_option('jid: ')
         self.update_roster(jid=jid)
 
     def exit(self):
-        self.disconnect(wait=True)
+        self.disconnect()
 
-    def
+    async def send_file(self):
+        file_name = get_option('Dirección del archivo: ')
+        receiver = get_option('Para: ')
+        file = open(file_name, 'rb')
+
+        try:
+            # open stream
+            proxy = await self['xep_0065'].handshake(receiver)
+
+            # Send file
+            while True:
+                data = file.read(1048576)
+                if not data:
+                    break
+                await proxy.write(data)
+
+            proxy.transport.write_eof()
+        except (IqTimeout, IqError):
+            print(t.color(9)('Error en transferencia'))
+        else:
+            print(t.color()('Transferencia completada'))
+        finally:
+            file.close()
 
 
 

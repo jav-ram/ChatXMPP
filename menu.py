@@ -45,9 +45,9 @@ def switcher(opt, actions):
             actions[opt]()
 
 
-def OptionsMenu(h,):
+def OptionsMenu(h, mi, mg):
     args = {
-        'h ': h
+        'h ': h,
         'mi': mi,
         'mg': mg,
     }
