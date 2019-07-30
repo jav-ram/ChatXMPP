@@ -7,6 +7,10 @@ from blessed import Terminal
 t = Terminal()
 
 
+def msg_group(msg):
+    print(t.color(40)(msg))
+
+
 class User(slixmpp.ClientXMPP):
 
     def __init__(self, jid, password):
@@ -15,7 +19,9 @@ class User(slixmpp.ClientXMPP):
         self.menu = Thread(target=OptionsMenu, args=(
             menu,
             self.send_individual_message,
-            self.get_roster,
+            self.get_roster_print,
+            self.delete_account,
+            self.send_file,
         ))
 
         # start event
@@ -24,6 +30,8 @@ class User(slixmpp.ClientXMPP):
         self.add_event_handler('register', self.register)
         # message event
         self.add_event_handler('message', self.message)
+        # group message event
+        self.add_event_handler("groupchat_message", self.muc_message)
 
     def start(self, event):
         # <presence />
@@ -51,10 +59,35 @@ class User(slixmpp.ClientXMPP):
 
         self.menu.start()
 
+    async def delete_account(self):
+        resp = self.Iq()
+        resp['type'] = 'set'
+        resp['from'] = self.boundjid.jid
+        resp['register'] = ' '
+        resp['register']['remove'] = ' '
+
+        try:
+            await resp.send()
+            print('')
+        except IqError:
+            print("Error al eliminar cuenta")
+        except IqTimeout:
+            print("timeout")
+            self.disconnect()
+
     def message(self, msg):
         if msg['type'] in ('normal', 'chat'):
             # Do something
             print(msg['body'])
+        else:
+            # Error
+            print('Error')
+            print(msg['body'])
+
+    def muc_message(self, msg):
+        if msg['type'] in ('normal', 'chat'):
+            # Do something
+            msg_group(msg['body'])
         else:
             # Error
             print('Error')
@@ -73,13 +106,12 @@ class User(slixmpp.ClientXMPP):
     def get_my_roster(self):
         print(self.get_roster())
 
-    # TODO: parse from roster
+    def get_roster_print(self):
+        print(self.roster)
+
     def get_one_user(self):
         jid = get_option('jid: ')
-        roster = self.get_roster()
-        f = open('menu.py', 'rb')
-        f.read()
-
+        print(self.roster[jid])
 
     def add_to_roster(self):
         jid = get_option('jid: ')
@@ -93,9 +125,10 @@ class User(slixmpp.ClientXMPP):
         receiver = get_option('Para: ')
         file = open(file_name, 'rb')
 
+        # open stream
+        proxy = await self['xep_0065'].handshake(receiver)
+
         try:
-            # open stream
-            proxy = await self['xep_0065'].handshake(receiver)
 
             # Send file
             while True:

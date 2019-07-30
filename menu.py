@@ -11,6 +11,7 @@ options = [
     ('ul', 'Lista de usuarios'),
     ('ui', 'Información de usuario individual'),
     ('au', 'Agregar usuario a mi lista de contactos'),
+    ('sf', 'Enviar archivo a una persona'),
     ('q ', 'Desconectarme'),
     ('!q', 'Borrar cuenta'),
     # ('', ''),
@@ -45,11 +46,13 @@ def switcher(opt, actions):
             actions[opt]()
 
 
-def OptionsMenu(h, mi, mg):
+def OptionsMenu(h, mi, mg, ul, sf):
     args = {
         'h ': h,
         'mi': mi,
         'mg': mg,
+        'ul': ul,
+        'sf': sf,
     }
     menu()
     print(args)
