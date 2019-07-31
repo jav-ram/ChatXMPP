@@ -4,6 +4,7 @@ from slixmpp.exceptions import IqError, IqTimeout
 from menu import OptionsMenu, get_option, menu
 from blessed import Terminal
 import asyncio
+import random
 
 t = Terminal()
 
@@ -93,7 +94,7 @@ class User(slixmpp.ClientXMPP):
     def message(self, msg):
         if msg['type'] in ('normal', 'chat'):
             # Do something
-            print(msg['body'])
+            print( t.color(random.randint(9, 15))(t.bold(str(msg['from'])) + ': ' + str(msg['body'])))
         else:
             # Error
             print('Error')
