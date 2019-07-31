@@ -32,6 +32,8 @@ class User(slixmpp.ClientXMPP):
             self.add_to_roster,
             self.delete_account,
             self.change_status,
+            self.get_one_user,
+            self.exit,
         ))
 
         # start event
@@ -52,6 +54,7 @@ class User(slixmpp.ClientXMPP):
         self.get_roster()
         print(self.boundjid)
         # self.send_message(mto='a@alumchat.xyz', mbody='Hello')
+        self.menu.start()
 
     async def register(self, iq):
         resp = self.Iq()
@@ -67,8 +70,6 @@ class User(slixmpp.ClientXMPP):
         except IqTimeout:
             print("timeout")
             self.disconnect()
-
-        self.menu.start()
 
     def delete_account(self):
         asyncio.run(self.delete_account_send())
@@ -117,6 +118,7 @@ class User(slixmpp.ClientXMPP):
         pass
 
     def get_my_roster(self):
+        print(self.client_roster)
         print(self.get_roster())
 
     def change_status(self):
@@ -126,13 +128,15 @@ class User(slixmpp.ClientXMPP):
 
         self.make_presence(pshow=status)
 
-
     def get_roster_print(self):
-        print(self.roster)
+        for jid in self.roster[self.jid]:
+            print(jid)
+            print(self.roster[self.jid][jid])
+            print('--------------------------')
 
     def get_one_user(self):
         jid = get_option('jid: ')
-        print(self.roster[jid])
+        print(self.roster[self.jid][jid])
 
     def add_to_roster(self):
         jid = get_option('jid: ')

@@ -5,16 +5,16 @@ from blessed import Terminal
 t = Terminal()
 
 options = [
-    ('h ', 'Volver a mostrar este menu'),
-    ('mi', 'Mensaje individual'),
-    ('mg', 'Mensaje a grupo'),
-    ('ul', 'Lista de usuarios'),
-    ('ui', 'Información de usuario individual'),
-    ('au', 'Agregar usuario a mi lista de contactos'),
-    ('st', 'Cambiar status'),
-    ('sf', 'Enviar archivo a una persona'),
-    ('q ', 'Desconectarme'),
-    ('qq', 'Borrar cuenta'),
+    ('h ', 'Volver a mostrar este menu'),               # Complete
+    ('mi', 'Mensaje individual'),                       # Complete
+    ('mg', 'Mensaje a grupo'),                          # Not Working
+    ('ul', 'Lista de usuarios'),                        # Incomplete: parse
+    ('ui', 'Información de usuario individual'),        # Incomplete: parse
+    ('au', 'Agregar usuario a mi lista de contactos'),  # Complete
+    ('st', 'Cambiar status'),                           # Maybe
+    ('sf', 'Enviar archivo a una persona'),             # Not Working
+    ('q ', 'Desconectarme'),                            # Incomplete: thread bum
+    ('qq', 'Borrar cuenta'),                            # Complete
     # ('', ''),
 ]
 
@@ -47,7 +47,7 @@ def switcher(opt, actions):
             actions[opt]()
 
 
-def OptionsMenu(h, mi, ul, sf, au, qq, st):
+def OptionsMenu(h, mi, ul, sf, au, qq, st, ui, q):
     args = {
         'h ': h,
         'mi': mi,
@@ -56,12 +56,15 @@ def OptionsMenu(h, mi, ul, sf, au, qq, st):
         'au': au,
         'qq': qq,
         'st': st,
+        'ui': ui,
+        'q ': q,
     }
     menu()
-    print(args)
     while True:
         option = get_option()
         switcher(option, args)
+        if (option == 'q '):
+            break
     #     print(self.args)
     #     switcher(option, self.args)
 

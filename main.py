@@ -30,4 +30,4 @@ if __name__ == '__main__':
     xmpp.plugin['xep_0077'].force_registration = True
 
     xmpp.connect()
-    xmpp.process(forever=True)
+    xmpp.process()
