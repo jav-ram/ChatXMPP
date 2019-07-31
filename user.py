@@ -3,8 +3,16 @@ from threading import Thread
 from slixmpp.exceptions import IqError, IqTimeout
 from menu import OptionsMenu, get_option, menu
 from blessed import Terminal
+import asyncio
 
 t = Terminal()
+
+possible_status = [
+    'dnd',
+    'chat',
+    'xa',
+    'away',
+]
 
 
 def msg_group(msg):
@@ -20,8 +28,10 @@ class User(slixmpp.ClientXMPP):
             menu,
             self.send_individual_message,
             self.get_roster_print,
-            self.delete_account,
             self.send_file,
+            self.add_to_roster,
+            self.delete_account,
+            self.change_status,
         ))
 
         # start event
@@ -40,6 +50,7 @@ class User(slixmpp.ClientXMPP):
         #   <query xmlns="data:iq:rooster" />
         # </iq>
         self.get_roster()
+        print(self.boundjid)
         # self.send_message(mto='a@alumchat.xyz', mbody='Hello')
 
     async def register(self, iq):
@@ -59,7 +70,10 @@ class User(slixmpp.ClientXMPP):
 
         self.menu.start()
 
-    async def delete_account(self):
+    def delete_account(self):
+        asyncio.run(self.delete_account_send())
+
+    async def delete_account_send(self):
         resp = self.Iq()
         resp['type'] = 'set'
         resp['from'] = self.boundjid.jid
@@ -102,9 +116,16 @@ class User(slixmpp.ClientXMPP):
     def send_group_message(self):
         pass
 
-    # TODO: get all users connected
     def get_my_roster(self):
         print(self.get_roster())
+
+    def change_status(self):
+        status = get_option('Nuevo status: ')
+        while status not in possible_status:
+            status = get_option('Nuevo status: ')
+
+        self.make_presence(pshow=status)
+
 
     def get_roster_print(self):
         print(self.roster)
@@ -115,35 +136,41 @@ class User(slixmpp.ClientXMPP):
 
     def add_to_roster(self):
         jid = get_option('jid: ')
-        self.update_roster(jid=jid)
+        self.send_presence_subscription(pto=jid)
 
     def exit(self):
         self.disconnect()
 
-    async def send_file(self):
-        file_name = get_option('Dirección del archivo: ')
+    def send_file(self):
+        asyncio.run(self.send_file_async())
+
+    async def send_file_async(self):
+
+        file_name = 'menu.py'
         receiver = get_option('Para: ')
         file = open(file_name, 'rb')
 
-        # open stream
-        proxy = await self['xep_0065'].handshake(receiver)
-
         try:
+            # Open the S5B stream in which to write to.
+            proxy = await self['xep_0065'].handshake(receiver)
 
-            # Send file
+            # Send the entire file.
             while True:
                 data = file.read(1048576)
                 if not data:
                     break
                 await proxy.write(data)
 
+            # And finally close the stream.
             proxy.transport.write_eof()
-        except (IqTimeout, IqError):
-            print(t.color(9)('Error en transferencia'))
+        except (IqError, IqTimeout):
+            print('File transfer errored')
         else:
-            print(t.color()('Transferencia completada'))
+            print('File transfer finished')
         finally:
             file.close()
+
+
 
 
 

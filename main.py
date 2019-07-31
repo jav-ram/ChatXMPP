@@ -22,11 +22,12 @@ if __name__ == '__main__':
     xmpp.register_plugin('xep_0060')  # PubSub
     xmpp.register_plugin('xep_0065')  # File transfer
     xmpp.register_plugin('xep_0199')  # XMPP Ping
+    xmpp.register_plugin('xep_0047')  # In-band Bytestreams
     xmpp.register_plugin('xep_0066')  # Out-of-band Data
     xmpp.register_plugin('xep_0077')  # Register
+    xmpp.register_plugin('xep_0065')  # SOCKS5 Bytestreams
 
     xmpp.plugin['xep_0077'].force_registration = True
 
     xmpp.connect()
-    xmpp.process()
-    xmpp.send_message(mto='a@alumchat.xyz', mbody='There')
+    xmpp.process(forever=True)
