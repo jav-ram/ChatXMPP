@@ -41,6 +41,22 @@ This project is on Python 3 and with python with venv (venv isn't obligatory).
     $ python ./main.py 
     ```
 
+## How to use
+This are the commands to execute actions on the chat. Ignore '' but not forget spaces.
+|Command| Descrition |
+|---------|-----------------|
+|'h '| Print help menu.|
+|'mi'| Individual message.|
+|'mg'| Group message.|
+|'ul'| List users.|
+|'ui'| Get individual user.|
+|'au'| Add user to contacts.|
+|'st'| Change status.|
+|'sf'| Send File.|
+|'q '| Logout.|
+|'qq'| Remove account.|
+
+
 **Extras**
 * If you want to add something else to the run try this:
     ```console
