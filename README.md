@@ -43,6 +43,8 @@ This project is on Python 3 and with python with venv (venv isn't obligatory).
 
 ## How to use
 This are the commands to execute actions on the chat. Ignore '' but not forget spaces.
+
+
 |Command| Descrition |
 |---------|-----------------|
 |'h '| Print help menu.|
