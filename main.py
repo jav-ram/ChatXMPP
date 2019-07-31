@@ -10,11 +10,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.jid is None:
-        # args.jid = input('Username: ')
-        args.jid = 'javier@alumchat.xyz'
+        args.jid = input('Username: ')
     if args.psw is None:
-        # args.psw = input('Password: ')
-        args.psw = 'j66352769'
+        args.psw = input('Password: ')
 
     xmpp = User(jid=args.jid, password=args.psw)
     xmpp.register_plugin('xep_0030')  # Service Discovery
@@ -30,4 +28,4 @@ if __name__ == '__main__':
     xmpp.plugin['xep_0077'].force_registration = True
 
     xmpp.connect()
-    xmpp.process()
+    xmpp.process(forever=False)

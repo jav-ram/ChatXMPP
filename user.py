@@ -150,29 +150,15 @@ class User(slixmpp.ClientXMPP):
 
     async def send_file_async(self):
 
-        file_name = 'menu.py'
+        file_name = 'README.md'
         receiver = get_option('Para: ')
-        file = open(file_name, 'rb')
 
-        try:
-            # Open the S5B stream in which to write to.
-            proxy = await self['xep_0065'].handshake(receiver)
+        stream = await self['xep_0047'].open_stream(receiver)
 
-            # Send the entire file.
-            while True:
-                data = file.read(1048576)
-                if not data:
-                    break
-                await proxy.write(data)
+        with open(file_name) as f:
+            data = f.read()
+            stream.sendall(data)
 
-            # And finally close the stream.
-            proxy.transport.write_eof()
-        except (IqError, IqTimeout):
-            print('File transfer errored')
-        else:
-            print('File transfer finished')
-        finally:
-            file.close()
 
 
 
